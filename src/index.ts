@@ -140,21 +140,6 @@ export class BTreeNode {
         return ~start;
     }
 
-    has(value: number): boolean {
-        let index = this.search(value);
-
-        if (index >= 0) {
-            return true;
-        }
-
-        if (this.height > 0) {
-            index = ~index;
-            return this.children[index]!.has(value);
-        }
-
-        return false;
-    }
-
     add(value: number): BTreeInsertionResult | boolean {
         let index = this.search(value);
         if (index >= 0) {
@@ -355,18 +340,16 @@ export class BTree {
     }
 
     has(value: number) {
-        let node = this.#root;
-        while (true) {
-            const index = node.search(value);
+        let node: BTreeNode | undefined = this.#root;
+        do {
+            const index: number = node.search(value);
             if (index >= 0) {
                 return true;
             }
 
-            node = node.children[~index]!;
-            if (!node) {
-                return false;
-            }
-        }
+            node = node.children[~index];
+        } while (node !== undefined);
+        return false;
     }
 
     add(value: number) {

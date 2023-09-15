@@ -52,6 +52,11 @@ describe("BTree", () => {
 
     for (let order = 3; order < 10; order += 1) {
         describe(`order ${order}`, () => {
+            it("should return correct order", () => {
+                const tree = new BTree(order);
+                expect(tree.order).toBe(order);
+            });
+
             it("should generate valid tree with incremental values", () => {
                 const tree = new BTree(order);
 
@@ -95,4 +100,67 @@ describe("BTree", () => {
             });
         });
     }
+
+    describe("add", () => {
+        it("should return `true` for new values", () => {
+            const tree = new BTree(5);
+            expect(tree.add(1)).toBe(true);
+            expect(tree.add(2)).toBe(true);
+        });
+
+        it("should return `false` for duplicate values", () => {
+            const tree = new BTree(5);
+            expect(tree.add(1)).toBe(true);
+            expect(tree.add(1)).toBe(false);
+        });
+    });
+
+    describe("delete", () => {
+        it("should return `true` for existing values", () => {
+            const tree = new BTree(5);
+            tree.add(1);
+            expect(tree.delete(1)).toBe(true);
+        });
+
+        it("should return `false` for non-existing values", () => {
+            const tree = new BTree(5);
+            expect(tree.delete(1)).toBe(false);
+        });
+    });
+
+    describe("clear", () => {
+        it("should clear the tree", () => {
+            const tree = new BTree(5);
+            tree.add(1);
+            tree.add(2);
+            tree.clear();
+            expect(tree.size).toBe(0);
+            validateTree(tree);
+        });
+    });
+
+    describe("iterate", () => {
+        it("should iterate in order", () => {
+            const tree = new BTree(5);
+
+            const values = Array.from(
+                { length: LENGTH },
+                (_, i) => i - LENGTH / 2,
+            );
+            shuffle(values);
+            for (const value of values) {
+                tree.add(value);
+            }
+
+            let prev = -Infinity;
+            let count = 0;
+            for (const value of tree) {
+                expect(value).toBeGreaterThan(prev);
+                expect(values).toContain(value);
+                prev = value;
+                count += 1;
+            }
+            expect(count).toBe(LENGTH);
+        });
+    });
 });

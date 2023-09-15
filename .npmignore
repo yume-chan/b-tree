@@ -1,10 +1,6 @@
-.rush
-
 # Test
 coverage
 **/*.spec.ts
-**/*.spec.js
-**/*.spec.js.map
 **/__helpers__
 jest.config.js
 
